@@ -1,0 +1,123 @@
+﻿@{
+    ViewData["Title"] = "EmployeeCreate Page";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@model AdminPanel.Models.Customer.CustomerEntity
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>INSPINIA | Dashboard v.4</title>
+
+    <link href="~/inspinia-gh-pages/css/bootstrap.min.css" rel="stylesheet">
+    <link href="~/inspinia-gh-pages/font-awesome/css/font-awesome.css" rel="stylesheet">
+
+    <!-- Morris -->
+    <link href="~/inspinia-gh-pages/css/plugins/morris/morris-0.4.3.min.css" rel="stylesheet">
+
+    <link href="~/inspinia-gh-pages/css/animate.css" rel="stylesheet">
+    <link href="~/inspinia-gh-pages/css/style.css" rel="stylesheet">
+
+</head>
+<body>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5>Create Employee <small>Fill in the details below.</small></h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="fa fa-wrench"></i></a>
+                        <ul class="dropdown-menu dropdown-user">
+                            <li><a href="#" class="dropdown-item">Config option 1</a></li>
+                            <li><a href="#" class="dropdown-item">Config option 2</a></li>
+                        </ul>
+                        <a class="close-link"><i class="fa fa-times"></i></a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <form method="post" asp-action="CustomerEdit" asp-controller="Customer" asp-autocomplete="off" role="form">
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label asp-for="CustomerName" class="control-label">İsim</label>
+                                <input asp-for="CustomerName" type="text" class="form-control" id="exampleInputName" placeholder="İsim">
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="CustomerSurname" class="control-label">Soyisim</label>
+                                <input asp-for="CustomerSurname" type="text" class="form-control" id="exampleInputSurname" placeholder="Soyisim">
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="CustPhoneNumber" class="control-label">Telefon Numarası</label>
+                                <input asp-for="CustPhoneNumber" type="number" class="form-control" id="exampleInputPhoneNumber" placeholder="Telefon Numarası">
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="CustEmail" class="control-label">Email</label>
+                                <input asp-for="CustEmail" type="email" class="form-control" id="exampleInputTitle" placeholder="Email">
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="CustAddress" class="control-label">Adres</label>
+                                <input asp-for="CustAddress" type="text" class="form-control" id="exampleInputTitle" placeholder="Adres">
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="CustTaxNo" class="control-label">Vergi Numarası</label>
+                                <input asp-for="CustTaxNo" type="number" class="form-control" id="exampleInputTitle" placeholder="Vergi Numarası">
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="CustTaxOffice" class="control-label">Vergi Dairesi</label>
+                                <input asp-for="CustTaxOffice" type="text" class="form-control" id="exampleInputTitle" placeholder="Vergi Dairesi">
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="CustTitle" class="control-label">Unvan</label>
+                                <input asp-for="CustTitle" type="text" class="form-control" id="exampleInputTitle" placeholder="Title">
+                            </div>
+                        </div>
+
+
+                        <!-- /.card-body -->
+                        <div class="card-footer">
+                            <button type="submit" class="btn btn-primary">Kaydet</button>
+                        </div>
+                        <div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="successModalLabel">Başarılı</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        İçerik başarıyla güncellendi.
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-primary" data-dismiss="modal">Tamam</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/inspinia-gh-pages/js/jquery-3.1.1.min.js"></script>
+    <script src="~/inspinia-gh-pages/js/bootstrap.bundle.min.js"></script>
+    <script src="~/inspinia-gh-pages/js/jquery-3.1.1.min.js"></script>
+    <script src="~/inspinia-gh-pages/js/bootstrap.bundle.min.js"></script>
+
+    @section Scripts {
+        <script>
+            $(document).ready(function () {
+                var successMessage = '@TempData["SuccessMessage"]';
+                if (successMessage) {
+                    $('#successModal').modal('show');
+                }
+            });
+        </script>
+    }
+</body>
