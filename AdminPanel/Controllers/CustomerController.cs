@@ -19,16 +19,18 @@ namespace AdminPanel.Controllers
         }
 
         public async Task<IActionResult> CustomerPage(string sortOrder)
-        {
+        { 
             ViewData["CustomerIdSortParam"] = string.IsNullOrEmpty(sortOrder) ? "CustomerId_desc" : "";
             ViewData["CustomerNameSortParam"] = sortOrder == "CustomerName" ? "CustomerName_desc" : "CustomerName";
             ViewData["CustomerSurnameSortParam"] = sortOrder == "CustomerSurname" ? "CustomerSurname_desc" : "CustomerSurname";
             ViewData["CustPhoneNumberSortParam"] = sortOrder == "CustPhoneNumber" ? "CustPhoneNumber_desc" : "CustPhoneNumber";
             ViewData["CustEmailSortParam"] = sortOrder == "CustEmail" ? "CustEmail_desc" : "CustEmail";
 
-            var customers = from c in _context.Customers select c;
+            // Sadece aktif müşterileri alıyoruz
+            var customers = _context.Customers.Where(c => c.IsActive);
 
-            switch(sortOrder)
+            // Sıralama işlemi
+            switch (sortOrder)
             {
                 case "CustomerId_desc":
                     customers = customers.OrderByDescending(c => c.CustomerId);
@@ -57,10 +59,12 @@ namespace AdminPanel.Controllers
                 case "CustEmail_desc":
                     customers = customers.OrderByDescending(c => c.CustEmail);
                     break;
-
+                default:
+                    customers = customers.OrderBy(c => c.CustomerId);
+                    break;
             }
 
-            return View(await customers.ToListAsync()); 
+            return View(await customers.ToListAsync());
         }
         [HttpGet]
         public async Task<IActionResult> CustomerEdit(int Id)
@@ -72,6 +76,30 @@ namespace AdminPanel.Controllers
         [HttpPost]
         public async Task<IActionResult> CustomerEdit(CustomerEntity viewModel)
         {
+            //var customer = await _context.Customers.FindAsync(viewModel.CustomerId);
+
+            //if (customer != null)
+            //{
+            //    customer.CustomerId = viewModel.CustomerId;
+            //    customer.CustomerName = viewModel.CustomerName;
+            //    customer.CustomerSurname = viewModel.CustomerSurname;
+            //    customer.CustPhoneNumber = viewModel.CustPhoneNumber;
+            //    customer.CustEmail = viewModel.CustEmail;
+            //    customer.CustAddress = viewModel.CustAddress;
+            //    customer.CustTaxNo = viewModel.CustTaxNo;
+            //    customer.CustTaxOffice = viewModel.CustTaxOffice;
+            //    customer.CustTitle = viewModel.CustTitle;
+
+            //    _context.Customers.Update(customer);
+            //    await _context.SaveChangesAsync();
+            //}
+            //return View(viewModel);
+            if (!ModelState.IsValid)
+            {
+                // Model geçerli değilse hata mesajlarını kontrol edin
+                return View(viewModel);
+            }
+
             var customer = await _context.Customers.FindAsync(viewModel.CustomerId);
 
             if (customer != null)
@@ -86,17 +114,44 @@ namespace AdminPanel.Controllers
                 customer.CustTaxOffice = viewModel.CustTaxOffice;
                 customer.CustTitle = viewModel.CustTitle;
 
-                _context.Customers.Update(customer);
-                await _context.SaveChangesAsync();
+                try
+                {
+                    _context.Customers.Update(customer);
+                    await _context.SaveChangesAsync();
+
+                    TempData["SuccessMessage"] = "İçerik başarıyla güncellendi.";
+                    return RedirectToAction("CustomerEdit", new { Id = viewModel.CustomerId });
+                }
+                catch (Exception ex)
+                {
+                    // Güncelleme sırasında bir hata oluşursa, hata mesajını yakalayın
+                    ModelState.AddModelError(string.Empty, $"Güncelleme işlemi başarısız oldu: {ex.Message}");
+                }
             }
+            else
+            {
+                ModelState.AddModelError(string.Empty, "Müşteri bulunamadı.");
+            }
+
             return View(viewModel);
         }
         public async Task<IActionResult> CustomerDelete(int Id)
         {
+            //var customer = await _context.Customers.FindAsync(Id);
+            //_context.Remove(customer);
+            //await _context.SaveChangesAsync();
+            //return RedirectToAction("CustomerPage");
             var customer = await _context.Customers.FindAsync(Id);
-            _context.Remove(customer);
+            if (customer == null)
+            {
+                return NotFound();
+            }
+
+            customer.IsActive = false;
+            _context.Customers.Update(customer);
             await _context.SaveChangesAsync();
-            return RedirectToAction("CustomerPage");
+
+            return RedirectToAction("CustomerPage"); // Listeleme sayfasına yönlendirme
         }
 
         [HttpGet]

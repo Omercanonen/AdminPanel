@@ -15,6 +15,7 @@ namespace AdminPanel.Models.Customer
         public string CustTaxNo { get; set; }
         public string CustTaxOffice { get; set; }
         public string CustTitle { get; set; }
+        public bool IsActive { get; set; } = true;
         public ICollection<ServiceEntity>? Services { get; set; }
 
     }

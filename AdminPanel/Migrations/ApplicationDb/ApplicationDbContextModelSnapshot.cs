@@ -113,28 +113,6 @@ namespace AdminPanel.Migrations.ApplicationDb
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("AdminPanel.Models.Products.ProductModel", b =>
-                {
-                    b.Property<int>("ModelId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ModelId"));
-
-                    b.Property<string>("ModelName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ModelId");
-
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("ProductModels");
-                });
-
             modelBuilder.Entity("AdminPanel.Models.Service.ServiceEntity", b =>
                 {
                     b.Property<int>("ServiceId")
@@ -163,8 +141,9 @@ namespace AdminPanel.Migrations.ApplicationDb
                     b.Property<int>("EmployeeId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ModelId")
-                        .HasColumnType("int");
+                    b.Property<string>("Model")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("PartsCost")
                         .HasColumnType("int");
@@ -198,22 +177,9 @@ namespace AdminPanel.Migrations.ApplicationDb
 
                     b.HasIndex("EmployeeId");
 
-                    b.HasIndex("ModelId");
-
                     b.HasIndex("ProductId");
 
                     b.ToTable("Services");
-                });
-
-            modelBuilder.Entity("AdminPanel.Models.Products.ProductModel", b =>
-                {
-                    b.HasOne("AdminPanel.Models.Products.Product", "Products")
-                        .WithMany("ProductModels")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Products");
                 });
 
             modelBuilder.Entity("AdminPanel.Models.Service.ServiceEntity", b =>
@@ -230,12 +196,6 @@ namespace AdminPanel.Migrations.ApplicationDb
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("AdminPanel.Models.Products.ProductModel", "ProductModel")
-                        .WithMany("Services")
-                        .HasForeignKey("ModelId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
                     b.HasOne("AdminPanel.Models.Products.Product", "Product")
                         .WithMany("Services")
                         .HasForeignKey("ProductId")
@@ -247,8 +207,6 @@ namespace AdminPanel.Migrations.ApplicationDb
                     b.Navigation("Employee");
 
                     b.Navigation("Product");
-
-                    b.Navigation("ProductModel");
                 });
 
             modelBuilder.Entity("AdminPanel.Models.Customer.CustomerEntity", b =>
@@ -262,13 +220,6 @@ namespace AdminPanel.Migrations.ApplicationDb
                 });
 
             modelBuilder.Entity("AdminPanel.Models.Products.Product", b =>
-                {
-                    b.Navigation("ProductModels");
-
-                    b.Navigation("Services");
-                });
-
-            modelBuilder.Entity("AdminPanel.Models.Products.ProductModel", b =>
                 {
                     b.Navigation("Services");
                 });

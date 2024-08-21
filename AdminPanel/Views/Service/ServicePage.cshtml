@@ -32,7 +32,7 @@
                 <div class="input-group mb-3">
                     <input type="text" class="form-control form-control-sm" placeholder="Search">
                     <div class="input-group-append">
-                        <button class="btn btn-sm btn-primary" type="button">Go!</button>
+                        <button class="btn btn-sm btn-primary" type="button">Ara</button>
                     </div>
                 </div>
 
@@ -40,74 +40,135 @@
             <div class="col-sm-3">
                 <div class="input-group mb-3">
       
-                        <a asp-controller="Service" asp-action="ServiceCreate" class="btn btn-primary" style="margin-left: auto;">Kullanıcı Ekle</a>
+                        <a asp-controller="Service" asp-action="ServiceCreate" class="btn btn-primary" style="margin-left: auto;">Kayıt Ekle</a>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="table-responsive">
-            @if (Model != null && Model.Any())
-            {
-                <table class="table table-striped">
-                    <thead>
+        <div class="table-responsive">    
+       @*  @if (Model != null && Model.Any())
+        {
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">
+                            <a asp-action="ServicePage" asp-route-sortOrder="@ViewData["ServiceIdSortParam"]" class="sortable-column">Servis Id</a>
+                        </th>
+                        <th scope="col">
+                            <a asp-action="ServicePage" asp-route-sortOrder="@ViewData["CustomerIdSortParam"]" class="sortable-column">Müşteri</a>
+                        </th>
+                        <th scope="col">
+                            <a asp-action="ServicePage" asp-route-sortOrder="@ViewData["EmployeeIdSortParam"]" class="sortable-column">Çalışan</a>
+                        </th>
+                        <th scope="col">
+                            <a asp-action="ServicePage" asp-route-sortOrder="@ViewData["ProductIdSortParam"]" class="sortable-column">Ürün Markası</a>
+                        </th>
+                        <th scope="col">
+                            <a asp-action="ServicePage" asp-route-sortOrder="@ViewData["ModelSortParam"]" class="sortable-column">Ürün Modeli</a>
+                        </th>
+                        <th scope="col">Garanti Durumu</th>
+                        <th scope="col">Ödeme Durumu</th>
+                        <th scope="col">Teslimat Durumu</th>
+                        <th scope="col">Teslimat Tarihi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var service in Model)
+                    {
                         <tr>
-                            <th scope="col">
-                                <a asp-action="ServicePage" asp-route-sortOrder="@ViewData["ServiceIdSortParam"]" class="sortable-column">Service Id</a>
-                            </th>
-                            <th scope="col">
-                                <a asp-action="ServicePage" asp-route-sortOrder="@ViewData["CustomerIdSortParam"]" class="sortable-column">Customer Id</a>
-                            </th>
-                            <th scope="col">
-                                <a asp-action="ServicePage" asp-route-sortOrder="@ViewData["EmployeeIdSortParam"]" class="sortable-column">Employee Id</a>
-                            </th>
-                            <th scope="col">
-                                <a asp-action="ServicePage" asp-route-sortOrder="@ViewData["ProductIdSortParam"]" class="sortable-column">Product Id</a>
-                            </th>
-                            <th scope="col">
-                                <a asp-action="ServicePage" asp-route-sortOrder="@ViewData["ModelSortParam"]" class="sortable-column">Model</a>
-                            </th>
-                            <th scope="col">Warranty</th>
-                            <th scope="col">Payment Status</th>
-                            <th scope="col">Delivery Status</th>
-                            <th scope="col">Delivery Date</th>
+                            <td>@service.ServiceId</td>
+                            <td>@service.CustomerId</td>
+                            <td>@service.EmployeeId</td>
+                            <td>@service.ProductId</td>
+                            <td>@service.Model</td>
+                            <td>
+                                <span class="badge @(service.Warranty ? "badge-success" : "badge-danger")">
+                                    @(service.Warranty ? "Aktif" : "Pasif")
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge @(service.PaymentStatus ? "badge-success" : "badge-danger")">
+                                    @(service.PaymentStatus ? "Ödendi" : "Ödenmedi")
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge @(service.DeliveryStatus ? "badge-success" : "badge-warning")">
+                                    @(service.DeliveryStatus ? "Teslim Edildi" : "Serviste")
+                                </span>
+                            </td>
+                            <td>@service.DeliveryDate</td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var service in Model)
-                        {
-                        <th scope="row">@service.ServiceId</th>
-                        <th scope="row">@service.CustomerId</th>
-                        <th scope="row">@service.EmployeeId</th>
-                        <th scope="row">@service.ProductId</th>
-                        <th scope="row">@service.Model</th>
-                        @* <th scope="row">@service.Warranty</th> *@
-                    <td>
-                        <span class="badge @(service.Warranty ? "badge-success" : "badge-danger")">
-                                @(service.Warranty ? "Aktif" : "Pasif")
-                        </span>
-                    </td>
-                        @* <th scope="row">@service.PaymentStatus</th> *@
-                    <td>
-                        <span class="badge @(service.PaymentStatus ? "badge-success" : "badge-danger")">
-                                @(service.PaymentStatus ? "Ödendi" : "Ödenmedi")
-                        </span>
-                    </td>
-                        @* <th scope="row">@service.DeliveryStatus</th> *@
-                    <td>
-                        <span class="badge @(service.DeliveryStatus ? "badge-success" : "badge-warning")">
-                                @(service.DeliveryStatus ? "Teslim Edildi" : "Serviste")
-                        </span>
-                    </td>
-                        <th scope="row">@service.DeliveryDate</th>
-                        }
-
-                    </tbody>
-                </table>
-            }
-            else
-            {
-                <p>Kullanıcı Bulunamadı</p>
-            }
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p>Kullanıcı Bulunamadı</p>
+        } *@
+        @if (Model != null && Model.Any())
+        {
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">
+                            <a asp-action="ServicePage" asp-route-sortOrder="@ViewData["ServiceIdSortParam"]" class="sortable-column">Service Id</a>
+                        </th>
+                        <th scope="col">
+                            <a asp-action="ServicePage" asp-route-sortOrder="@ViewData["CustomerIdSortParam"]" class="sortable-column">Customer Name</a>
+                        </th>
+                        <th scope="col">
+                            <a asp-action="ServicePage" asp-route-sortOrder="@ViewData["EmployeeIdSortParam"]" class="sortable-column">Employee Name</a>
+                        </th>
+                        <th scope="col">
+                            <a asp-action="ServicePage" asp-route-sortOrder="@ViewData["ProductIdSortParam"]" class="sortable-column">Product Name</a>
+                        </th>
+                        <th scope="col">
+                            <a asp-action="ServicePage" asp-route-sortOrder="@ViewData["ModelSortParam"]" class="sortable-column">Model</a>
+                        </th>
+                        <th scope="col">Warranty</th>
+                        <th scope="col">Payment Status</th>
+                        <th scope="col">Delivery Status</th>
+                        <th scope="col">Delivery Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var service in Model)
+                    {
+                        <tr>
+                            <td>@service.ServiceId</td>
+                            <td>@service.Customer?.CustomerName</td>
+                            <td>@service.Employee?.EmpName</td>
+                            <td>@service.Product?.ProductName</td>
+                            <td>@service.Model</td>
+                            <td>
+                                <span class="badge @(service.Warranty ? "badge-success" : "badge-danger")">
+                                    @(service.Warranty ? "Aktif" : "Pasif")
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge @(service.PaymentStatus ? "badge-success" : "badge-danger")">
+                                    @(service.PaymentStatus ? "Ödendi" : "Ödenmedi")
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge @(service.DeliveryStatus ? "badge-success" : "badge-warning")">
+                                    @(service.DeliveryStatus ? "Teslim Edildi" : "Serviste")
+                                </span>
+                            </td>
+                            <td>@service.DeliveryDate?.ToString("dd/MM/yyyy")</td>
+                            <td><a class="btn btn-danger" asp-action="ServiceDelete" asp-route-id="@service.ServiceId">Sil</a></td>
+                            <td><a class="btn btn-secondary" asp-action="ServiceEdit" asp-route-id="@service.ServiceId">Güncelle</a></td>
+                        </tr>
+                        
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p>Kullanıcı Bulunamadı</p>
+        }
         </div>
 
     </div>

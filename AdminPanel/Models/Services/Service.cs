@@ -12,7 +12,7 @@ namespace AdminPanel.Models.Service
         public int ServiceId { get; set; }
         public int CustomerId { get; set; }
         public int ProductId { get; set; }
-        public int Model { get; set; }
+        public string Model { get; set; }
         public int EmployeeId { get; set; }
         public string SeriNo { get; set; }
         public bool Warranty { get; set; }
@@ -25,6 +25,7 @@ namespace AdminPanel.Models.Service
         public bool PaymentStatus { get; set; }
         public bool DeliveryStatus { get; set; }
         public DateTime? DeliveryDate { get; set; }
+        public bool IsActive { get; set; } = true;
 
         public CustomerEntity? Customer { get; set; }
         public Product? Product { get; set; }

@@ -21,31 +21,33 @@ namespace AdminPanel.Controllers
             ViewData["CustomerIdSortParam"] = string.IsNullOrEmpty(sortOrder) ? "CustomerId_desc" : "";
             ViewData["EmployeeIdSortParam"] = string.IsNullOrEmpty(sortOrder) ? "EmployeeId_desc" : "";
             ViewData["ProductIdSortParam"] = string.IsNullOrEmpty(sortOrder) ? "ProductId_desc" : "";
-            //ViewData["ModelSortParam"] = string.IsNullOrEmpty(sortOrder) ? "ModelId_desc" : ""; düzenle
             ViewData["ModelSortParam"] = sortOrder == "Model" ? "Model_desc" : "Model";
             ViewData["SeriNoSortParam"] = sortOrder == "SeriNo" ? "SeriNo_desc" : "SeriNo";
             ViewData["PartsCostSortParam"] = sortOrder == "PartsCost" ? "PartsCost_desc" : "PartsCost";
             ViewData["ServiceCostSortParam"] = sortOrder == "ServiceCost" ? "ServiceCost_desc" : "ServiceCost";
             ViewData["TotalCostSortParam"] = sortOrder == "TotalCost" ? "TotalCost_desc" : "TotalCost";
-            var services = from s in _context.Services select s;
+
+            var services = _context.Services
+                .Include(s => s.Customer)
+                .Include(s => s.Product)
+                .Include(s => s.Employee)
+                .Where(s => s.IsActive)
+                .AsQueryable();
 
             switch (sortOrder)
             {
                 case "ServiceId_desc":
-                    services = services.OrderByDescending(s => s.EmployeeId);
+                    services = services.OrderByDescending(s => s.ServiceId);
                     break;
                 case "CustomerId_desc":
-                    services = services.OrderByDescending(s => s.CustomerId);
+                    services = services.OrderByDescending(s => s.Customer.CustomerName);
                     break;
                 case "EmployeeId_desc":
-                    services = services.OrderByDescending(s => s.EmployeeId);
+                    services = services.OrderByDescending(s => s.Employee.EmpName);
                     break;
                 case "ProductId_desc":
-                    services = services.OrderByDescending(s => s.ProductId);
+                    services = services.OrderByDescending(s => s.Product.ProductName);
                     break;
-                //case "ModelId_desc":
-                //    services = services.OrderByDescending(s => s.ModelId);
-                //    break; düzenle
                 case "Model":
                     services = services.OrderBy(s => s.Model);
                     break;
@@ -76,8 +78,27 @@ namespace AdminPanel.Controllers
                 case "TotalCost_desc":
                     services = services.OrderByDescending(s => s.TotalCost);
                     break;
+                default:
+                    services = services.OrderBy(s => s.ServiceId);
+                    break;
             }
+
             return View(await services.ToListAsync());
+        }
+
+        public async Task<IActionResult> ServiceDelete(int Id)
+        {
+            var service = await _context.Services.FindAsync(Id);
+            if (service == null)
+            {
+                return NotFound();
+            }
+
+            service.IsActive = false;
+            _context.Services.Update(service);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("ServicePage");
         }
 
         [HttpGet]

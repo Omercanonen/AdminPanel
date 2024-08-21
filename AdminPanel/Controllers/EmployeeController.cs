@@ -27,7 +27,8 @@ namespace AdminPanel.Controllers
             ViewData["EmpPhoneNumberSortParam"] = sortOrder == "EmpPhoneNumber" ? "EmpPhoneNumber_desc" : "EmpPhoneNumber";
             ViewData["EmpTitleSortParam"] = sortOrder == "EmpTitle" ? "EmpTitle_desc" : "EmpTitle";
 
-            var employees = from e in _context.Employees select e;
+
+            var employees = _context.Employees.Where(e => e.IsActive);
 
             switch (sortOrder)
             {
@@ -122,10 +123,23 @@ namespace AdminPanel.Controllers
         }
         public async Task<IActionResult> EmployeeDelete(int Id)
         {
+            //var employee = await _context.Employees.FindAsync(Id);
+            //_context.Remove(employee);
+            //await _context.SaveChangesAsync();
+            //return RedirectToAction("EmployeePage");
+
             var employee = await _context.Employees.FindAsync(Id);
-            _context.Remove(employee);
+            if (employee == null)
+            {
+                return NotFound(); 
+            }
+
+            employee.IsActive= false;
+            _context.Employees.Update(employee);
             await _context.SaveChangesAsync();
+
             return RedirectToAction("EmployeePage");
+
         }
 
         [HttpGet]

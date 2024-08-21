@@ -10,6 +10,7 @@ namespace AdminPanel.Models.Employees
         public string EmpSurname { get; set; }
         public string EmpPhoneNumber { get; set; }
         public string EmpTitle { get; set; }
+        public bool IsActive { get; set; } = true;
 
         public ICollection<ServiceEntity>? Services { get; set; }
 

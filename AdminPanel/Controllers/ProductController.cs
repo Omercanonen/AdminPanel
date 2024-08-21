@@ -22,8 +22,8 @@ namespace AdminPanel.Controllers
         {
             ViewData["ProductIdSortParam"] = string.IsNullOrEmpty(sortOrder) ? "ProductId_desc" : "";
             ViewData["ProductNameSortParam"] = sortOrder == "ProductName" ?  "ProductName_desc" : "EmpName";
- 
-            var products = from p in _context.Products select p;
+
+            var products = _context.Products.Where(p => p.IsActive);
 
             switch (sortOrder)
             {
@@ -41,19 +41,15 @@ namespace AdminPanel.Controllers
             return View(await products.ToListAsync());
         }
         public async Task<IActionResult> ProductDelete(int Id)
-        {
-            //var product = await _context.Products.FindAsync(Id);
-            //_context.Remove(product);
-            //await _context.SaveChangesAsync();
-            //return RedirectToAction("ProductPage");
+        {   
             var product = await _context.Products.FindAsync(Id);
 
-            
             if (product == null)
             {
                 return NotFound();
             }
-            _context.Products.Remove(product);
+            product.IsActive = false;
+           _context.Products.Update(product);
             await _context.SaveChangesAsync();
             TempData["SuccessMessage"] = "Product successfully deleted!";
             return RedirectToAction("ProductPage");
