@@ -157,5 +157,28 @@ namespace AdminPanel.Controllers
 
             return View(service);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> ServiceEdit(int ServiceId)
+        {
+            var service = await _context.Customers.FindAsync(ServiceId);
+
+            return View(service);
+        }
+        
+        
+        
+        
+        public async Task<IActionResult> ServiceEdit(ServiceEntity viewModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(viewModel);
+            }
+
+
+
+            
+        }
     }
 }

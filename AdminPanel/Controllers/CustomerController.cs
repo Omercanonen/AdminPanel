@@ -76,61 +76,41 @@ namespace AdminPanel.Controllers
         [HttpPost]
         public async Task<IActionResult> CustomerEdit(CustomerEntity viewModel)
         {
-            //var customer = await _context.Customers.FindAsync(viewModel.CustomerId);
-
-            //if (customer != null)
-            //{
-            //    customer.CustomerId = viewModel.CustomerId;
-            //    customer.CustomerName = viewModel.CustomerName;
-            //    customer.CustomerSurname = viewModel.CustomerSurname;
-            //    customer.CustPhoneNumber = viewModel.CustPhoneNumber;
-            //    customer.CustEmail = viewModel.CustEmail;
-            //    customer.CustAddress = viewModel.CustAddress;
-            //    customer.CustTaxNo = viewModel.CustTaxNo;
-            //    customer.CustTaxOffice = viewModel.CustTaxOffice;
-            //    customer.CustTitle = viewModel.CustTitle;
-
-            //    _context.Customers.Update(customer);
-            //    await _context.SaveChangesAsync();
-            //}
-            //return View(viewModel);
             if (!ModelState.IsValid)
             {
-                // Model geçerli değilse hata mesajlarını kontrol edin
                 return View(viewModel);
             }
 
+            // Mevcut müşteri kaydını bul
             var customer = await _context.Customers.FindAsync(viewModel.CustomerId);
 
-            if (customer != null)
-            {
-                customer.CustomerId = viewModel.CustomerId;
-                customer.CustomerName = viewModel.CustomerName;
-                customer.CustomerSurname = viewModel.CustomerSurname;
-                customer.CustPhoneNumber = viewModel.CustPhoneNumber;
-                customer.CustEmail = viewModel.CustEmail;
-                customer.CustAddress = viewModel.CustAddress;
-                customer.CustTaxNo = viewModel.CustTaxNo;
-                customer.CustTaxOffice = viewModel.CustTaxOffice;
-                customer.CustTitle = viewModel.CustTitle;
-
-                try
-                {
-                    _context.Customers.Update(customer);
-                    await _context.SaveChangesAsync();
-
-                    TempData["SuccessMessage"] = "İçerik başarıyla güncellendi.";
-                    return RedirectToAction("CustomerEdit", new { Id = viewModel.CustomerId });
-                }
-                catch (Exception ex)
-                {
-                    // Güncelleme sırasında bir hata oluşursa, hata mesajını yakalayın
-                    ModelState.AddModelError(string.Empty, $"Güncelleme işlemi başarısız oldu: {ex.Message}");
-                }
-            }
-            else
+            if (customer == null)
             {
                 ModelState.AddModelError(string.Empty, "Müşteri bulunamadı.");
+                return View(viewModel);
+            }
+
+            // Mevcut müşteri kaydını güncelle
+            customer.CustomerName = viewModel.CustomerName;
+            customer.CustomerSurname = viewModel.CustomerSurname;
+            customer.CustPhoneNumber = viewModel.CustPhoneNumber;
+            customer.CustEmail = viewModel.CustEmail;
+            customer.CustAddress = viewModel.CustAddress;
+            customer.CustTaxNo = viewModel.CustTaxNo;
+            customer.CustTaxOffice = viewModel.CustTaxOffice;
+            customer.CustTitle = viewModel.CustTitle;
+
+            try
+            {
+                // DbContext üzerinde güncelleme yap
+                await _context.SaveChangesAsync();
+
+                TempData["SuccessMessage"] = "İçerik başarıyla güncellendi.";
+                return RedirectToAction("CustomerEdit", new { Id = viewModel.CustomerId });
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, $"Güncelleme işlemi başarısız oldu: {ex.Message}");
             }
 
             return View(viewModel);
