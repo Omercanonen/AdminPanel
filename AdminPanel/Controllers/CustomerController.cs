@@ -81,7 +81,7 @@ namespace AdminPanel.Controllers
                 return View(viewModel);
             }
 
-            // Mevcut müşteri kaydını bul
+
             var customer = await _context.Customers.FindAsync(viewModel.CustomerId);
 
             if (customer == null)
@@ -90,7 +90,7 @@ namespace AdminPanel.Controllers
                 return View(viewModel);
             }
 
-            // Mevcut müşteri kaydını güncelle
+
             customer.CustomerName = viewModel.CustomerName;
             customer.CustomerSurname = viewModel.CustomerSurname;
             customer.CustPhoneNumber = viewModel.CustPhoneNumber;
@@ -102,7 +102,7 @@ namespace AdminPanel.Controllers
 
             try
             {
-                // DbContext üzerinde güncelleme yap
+   
                 await _context.SaveChangesAsync();
 
                 TempData["SuccessMessage"] = "İçerik başarıyla güncellendi.";
@@ -117,10 +117,6 @@ namespace AdminPanel.Controllers
         }
         public async Task<IActionResult> CustomerDelete(int Id)
         {
-            //var customer = await _context.Customers.FindAsync(Id);
-            //_context.Remove(customer);
-            //await _context.SaveChangesAsync();
-            //return RedirectToAction("CustomerPage");
             var customer = await _context.Customers.FindAsync(Id);
             if (customer == null)
             {

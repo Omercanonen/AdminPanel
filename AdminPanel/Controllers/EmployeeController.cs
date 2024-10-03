@@ -69,65 +69,54 @@ namespace AdminPanel.Controllers
         [Authorize]
         public async Task<IActionResult> EmployeeEdit(int Id)
         {
+
             var employee = await _context.Employees.FindAsync(Id);
 
-            if(employee == null)
+            if (employee == null)
             {
                 return NotFound();
             }
 
             return View(employee);
+
         }
         [HttpPost]
         [Authorize]
         public async Task<IActionResult> EmployeeEdit(Employee viewModel)
-        {
+        {   
             var employee = await _context.Employees.FindAsync(viewModel.EmployeeId);
 
-            if (employee != null)
+            if (employee == null)
             {
-                employee.EmployeeId = viewModel.EmployeeId;
-                employee.EmpName = viewModel.EmpName;
-                employee.EmpSurname = viewModel.EmpSurname;
-                employee.EmpPhoneNumber = viewModel.EmpPhoneNumber;
-                employee.EmpTitle = viewModel.EmpTitle;
-
-                _context.Employees.Update(employee);
-                await _context.SaveChangesAsync();
-                TempData["SuccessMessage"] = "Güncelleme işlemi başarıyla tamamlandı.";
+                ModelState.AddModelError(string.Empty, "Çalışan bulunamadı.");
+                return View(viewModel);
             }
-            ModelState.AddModelError("", "Çalışan bulunamadı.");
 
-            return View(viewModel);
-            //if (ModelState.IsValid)
-            //{
-            //    var employee = await _context.Employees.FindAsync(viewModel.EmployeeId);
+            
+            employee.EmpName = viewModel.EmpName;
+            employee.EmpSurname = viewModel.EmpSurname;
+            employee.EmpPhoneNumber = viewModel.EmpPhoneNumber;
+            employee.EmpTitle = viewModel.EmpTitle;
 
-            //    if (employee != null)
-            //    {
-            //        employee.EmpName = viewModel.EmpName;
-            //        employee.EmpSurname = viewModel.EmpSurname;
-            //        employee.EmpPhoneNumber = viewModel.EmpPhoneNumber;
-            //        employee.EmpTitle = viewModel.EmpTitle;
+            try
+            {
+                await _context.SaveChangesAsync();
 
-            //        _context.Employees.Update(employee);
-            //        await _context.SaveChangesAsync();
+               
+                TempData["SuccessMessage"] = "İçerik başarıyla güncellendi.";
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, $"Güncelleme işlemi başarısız oldu: {ex.Message}");
+            }
 
-            //        TempData["SuccessMessage"] = "Güncelleme işlemi başarıyla tamamlandı.";
-            //        return RedirectToAction("EmployeePage");
-            //    }
-            //    ModelState.AddModelError("", "Çalışan bulunamadı.");
-            //}
-            //return View(viewModel);
+            return View(viewModel); 
+
+
 
         }
         public async Task<IActionResult> EmployeeDelete(int Id)
         {
-            //var employee = await _context.Employees.FindAsync(Id);
-            //_context.Remove(employee);
-            //await _context.SaveChangesAsync();
-            //return RedirectToAction("EmployeePage");
-
             var employee = await _context.Employees.FindAsync(Id);
             if (employee == null)
             {
@@ -154,28 +143,6 @@ namespace AdminPanel.Controllers
         [Authorize]
         public async Task<IActionResult> EmployeeCreate([Bind("EmpName,EmpSurname,EmpPhoneNumber,EmpTitle")] Employee employee)
         {
-            //if (ModelState.IsValid)
-            //{
-            //    try
-            //    {
-            //        _context.Employees.Add(employee);
-            //        await _context.SaveChangesAsync();
-            //        return RedirectToAction("EmployeeCreate");
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        Console.WriteLine(ex.Message);
-            //        ModelState.AddModelError("", "Bir hata oluştu, lütfen tekrar deneyin.");
-            //    }
-            //}
-
-            //var errors = ModelState.Values.SelectMany(e => e.Errors);
-            //foreach (var error in errors)
-            //{
-            //    Console.WriteLine(error.ErrorMessage);
-            //}
-
-            //return View(employee);
             if (ModelState.IsValid)
             {
                 try

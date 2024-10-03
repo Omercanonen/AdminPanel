@@ -1,0 +1,144 @@
+﻿@{
+    ViewData["Title"] = "ServiceEdit Page";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@model AdminPanel.Models.Service.ServiceEntity
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>INSPINIA | Dashboard v.4</title>
+
+    <link href="~/inspinia-gh-pages/css/bootstrap.min.css" rel="stylesheet">
+    <link href="~/inspinia-gh-pages/font-awesome/css/font-awesome.css" rel="stylesheet">
+
+    <!-- Morris -->
+    <link href="~/inspinia-gh-pages/css/plugins/morris/morris-0.4.3.min.css" rel="stylesheet">
+
+    <link href="~/inspinia-gh-pages/css/animate.css" rel="stylesheet">
+    <link href="~/inspinia-gh-pages/css/style.css" rel="stylesheet">
+
+</head>
+<body>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5>Create Service <small>Fill in the details below.</small></h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="fa fa-wrench"></i></a>
+                        <ul class="dropdown-menu dropdown-user">
+                            <li><a href="#" class="dropdown-item">Config option 1</a></li>
+                            <li><a href="#" class="dropdown-item">Config option 2</a></li>
+                        </ul>
+                        <a class="close-link"><i class="fa fa-times"></i></a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <form method="post" asp-action="ServiceEdit" asp-controller="Service" asp-autocomplete="off" role="form">
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label asp-for="CustomerId" class="control-label"> Müşteri</label>
+                                <select asp-for="CustomerId" class="form-control" asp-items="ViewBag.CustomerList">
+                                    <option value="">Müşteri Seç</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="ProductId" class="control-label"> Marka</label>
+                                <select asp-for="ProductId" class="form-control" asp-items="ViewBag.ProductList">
+                                    <option value="">Marka Seç</option>
+                                </select>
+                            </div>
+                            @*  <div class="form-group">
+                            <label asp-for="ModelId" class="control-label"> Model</label>
+                            <select asp-for="ModelId" class="form-control" asp-items="ViewBag.ModelList">
+                            <option value="">Model Seç</option>
+                            </select>
+                            </div>  düzenle *@
+                            <div class="form-group">
+                                <label asp-for="Model" class="control-label">Model</label>
+                                <input asp-for="Model" type="text" class="form-control" id="exampleInputServiceCost" placeholder="Model">
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="EmployeeId" class="control-label"> Çalışanlar</label>
+                                <select asp-for="EmployeeId" class="form-control" asp-items="ViewBag.EmployeeList">
+                                    <option value="">Çalışan Seç</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="SeriNo" class="control-label"> Seri Numarası</label>
+                                <input asp-for="SeriNo" type="number" class="form-control" id="exampleInputSeriNo" placeholder="Seri Numarası">
+                            </div>
+                            <div class="form-group">
+                                <label for="Warranty">Garanti Durumu</label>
+                                <div class="custom-control custom-radio">
+                                    <input asp-for="Warranty" type="radio" class="custom-control-input" id="WarrantyTrue" name="Warranty" value="true" />
+                                    <label class="custom-control-label" for="WarrantyTrue">Aktif</label>
+                                </div>
+                                <div class="custom-control custom-radio">
+                                    <input asp-for="Warranty" type="radio" class="custom-control-input" id="WarrantyFalse" name="Warranty" value="false" />
+                                    <label class="custom-control-label" for="WarrantyFalse">Pasif</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Complaint" class="control-label">Şikayet</label>
+                                <input asp-for="Complaint" type="text" class="form-control" id="exampleInputComplaint" placeholder="Şikayet">
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="PerformedActions" class="control-label">Yapılan İşlemler</label>
+                                <input asp-for="PerformedActions" type="text" class="form-control" id="exampleInputPerformedActions" placeholder="Yapılan İşlemler">
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="PartsCost" class="control-label">Parça Tutarı</label>
+                                <input asp-for="PartsCost" type="number" class="form-control" id="exampleInputPartsCost" placeholder="Parts Tutarı">
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="ServiceCost" class="control-label">Servis Tutarı</label>
+                                <input asp-for="ServiceCost" type="number" class="form-control" id="exampleInputServiceCost" placeholder="Servis Tutarı">
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="TotalCost" class="control-label">Toplam Tutar</label>
+                                <input asp-for="TotalCost" type="number" class="form-control" id="exampleInputTotalCost" placeholder="Toplam Tutar">
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Description" class="control-label">Açıklama</label>
+                                <input asp-for="Description" type="text" class="form-control" id="exampleInputDescription" placeholder="Açıklama">
+                            </div>
+                            <div class="form-group">
+                                <label for="PaymentStatus">Payment Status</label>
+                                <div class="custom-control custom-radio">
+                                    <input asp-for="PaymentStatus" type="radio" class="custom-control-input" id="PaymentStatusTrue" name="PaymentStatus" value="true" />
+                                    <label class="custom-control-label" for="PaymentStatusTrue">Ödeme Alındı</label>
+                                </div>
+                                <div class="custom-control custom-radio">
+                                    <input asp-for="PaymentStatus" type="radio" class="custom-control-input" id="PaymentStatusFalse" name="PaymentStatus" value="false" />
+                                    <label class="custom-control-label" for="PaymentStatusFalse">Ödeme Alınmadı</label>
+                                </div>
+                            </div>
+
+
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="DeliveryDate" class="control-label">Teslim Tarihi</label>
+                            <input asp-for="DeliveryDate" type="datetime-local" class="form-control" id="exampleInputDescription" />
+                        </div>
+
+                        <!-- /.card-body -->
+                        <div class="card-footer">
+                            <button type="submit" class="btn btn-primary">Kaydet</button>
+                        </div>
+                    </form>   
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/inspinia-gh-pages/js/jquery-3.1.1.min.js"></script>
+    <script src="~/inspinia-gh-pages/js/bootstrap.bundle.min.js"></script>
+</body>
+

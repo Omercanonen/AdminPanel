@@ -43,6 +43,10 @@
                     <form method="post" asp-action="EmployeeEdit" asp-controller="Employee" asp-autocomplete="off" role="form">
                         <div class="card-body">
                             <div class="form-group">
+                                <label asp-for="EmployeeId" class="control-label">Çalışan Id</label>
+                                <input asp-for="EmployeeId" type="text" class="form-control" id="exampleEmployeeId" placeholder="Çalışan Id">
+                            </div>
+                            <div class="form-group">
                                 <label asp-for="EmpName" class="control-label">İsim</label>
                                 <input asp-for="EmpName" type="text" class="form-control" id="exampleInputName" placeholder="İsim">
                             </div>

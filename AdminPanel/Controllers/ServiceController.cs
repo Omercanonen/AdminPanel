@@ -161,14 +161,48 @@ namespace AdminPanel.Controllers
         [HttpGet]
         public async Task<IActionResult> ServiceEdit(int ServiceId)
         {
-            var service = await _context.Customers.FindAsync(ServiceId);
+            //var service = await _context.Customers.FindAsync(ServiceId);
 
+            //return View(service);
+            //ServiceEntity'den ilgili kaydı bul
+            //var service = await _context.Services.FindAsync(ServiceId);
+
+            //if (service == null)
+            //{
+            //    //Eğer kayıt bulunamazsa, hata mesajı ekleyip geri döner
+            //    ModelState.AddModelError(string.Empty, "Servis bulunamadı.");
+            //    return RedirectToAction("ServicePage"); // Örneğin listeleme sayfasına geri dönebilirsiniz.
+            //}
+
+            ////DropDown listeleri doldur
+            //ViewBag.CustomerList = new SelectList(_context.Customers, "CustomerId", "CustomerName");
+            //ViewBag.ProductList = new SelectList(_context.Products, "ProductId", "ProductName");
+            //ViewBag.EmployeeList = new SelectList(_context.Employees, "EmployeeId", "EmployeeName");
+
+            ////Bulunan servisi view'a gönder
+            //return View(service);
+            // ServiceEntity'den ilgili kaydı bul
+            var service = await _context.Services.FindAsync(ServiceId);
+
+            if (service == null)
+            {
+                // Eğer kayıt bulunamazsa, hata mesajı ekleyip geri döner
+                ModelState.AddModelError(string.Empty, "Servis bulunamadı.");
+                return RedirectToAction("ServicePage"); // Listeleme sayfasına geri dönebilirsiniz.
+            }
+
+            // DropDown listeleri doldur
+            ViewBag.CustomerList = new SelectList(_context.Customers, "CustomerId", "CustomerName");
+            ViewBag.ProductList = new SelectList(_context.Products, "ProductId", "ProductName");
+            ViewBag.EmployeeList = new SelectList(_context.Employees, "EmployeeId", "EmployeeName");
+
+            // Bulunan servisi view'a gönder
             return View(service);
         }
-        
-        
-        
-        
+
+
+
+        [HttpPost]
         public async Task<IActionResult> ServiceEdit(ServiceEntity viewModel)
         {
             if (!ModelState.IsValid)
@@ -176,9 +210,47 @@ namespace AdminPanel.Controllers
                 return View(viewModel);
             }
 
+            // Mevcut servis kaydını bul
+            var service = await _context.Services.FindAsync(viewModel.ServiceId);
+
+            if (service == null)
+            {
+                ModelState.AddModelError(string.Empty, "Servis bulunamadı.");
+                return View(viewModel);
+            }
+
+            // Mevcut müşteri bilgilerini güncelle
+            service.CustomerId = viewModel.CustomerId;
+            service.ProductId = viewModel.ProductId;
+            service.Model = viewModel.Model;
+            service.EmployeeId = viewModel.EmployeeId;
+            service.SeriNo = viewModel.SeriNo;
+            service.Warranty = viewModel.Warranty;
+            service.Complaint = viewModel.Complaint;
+            service.PerformedActions = viewModel.PerformedActions;
+            service.PartsCost = viewModel.PartsCost;
+            service.ServiceCost = viewModel.ServiceCost;
+            service.TotalCost = viewModel.TotalCost;
+            service.Description = viewModel.Description;
+            service.PaymentStatus = viewModel.PaymentStatus;
+            service.DeliveryDate = viewModel.DeliveryDate;
+
+            try
+            {
+                // Veritabanında değişiklikleri kaydet
+                await _context.SaveChangesAsync();
+
+                TempData["SuccessMessage"] = "Servis başarıyla güncellendi.";
+                return RedirectToAction("ServiceEdit", new { Id = viewModel.ServiceId });
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, $"Güncelleme işlemi başarısız oldu: {ex.Message}");
+
+            }
+            return View(viewModel);
 
 
-            
         }
     }
 }
