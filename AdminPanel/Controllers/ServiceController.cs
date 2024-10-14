@@ -15,7 +15,7 @@ namespace AdminPanel.Controllers
         {
             _context = context;
         }
-        public async Task<IActionResult> ServicePage(string sortOrder)
+        public async Task<IActionResult> ServicePage(string sortOrder, string serviceSearchString)
         {
             ViewData["ServiceIdSortParam"] = string.IsNullOrEmpty(sortOrder) ? "ServiceId_desc" : "";
             ViewData["CustomerIdSortParam"] = string.IsNullOrEmpty(sortOrder) ? "CustomerId_desc" : "";
@@ -33,6 +33,17 @@ namespace AdminPanel.Controllers
                 .Include(s => s.Employee)
                 .Where(s => s.IsActive)
                 .AsQueryable();
+
+            if (!string.IsNullOrEmpty(serviceSearchString))
+            {
+                services = services.Where(s =>
+                    s.Customer.CustomerName.Contains(serviceSearchString) ||
+                    s.Employee.EmpName.Contains(serviceSearchString) ||
+                    s.Product.ProductName.Contains(serviceSearchString) ||
+                    s.Model.Contains(serviceSearchString));
+            }
+
+
 
             switch (sortOrder)
             {
@@ -127,6 +138,7 @@ namespace AdminPanel.Controllers
                 try
                 {
                     _context.Services.Add(service);
+                    TempData["SuccessMessage"] = "Kayıt Başarıyla Oluşturuldu.";
                     await _context.SaveChangesAsync();
                     return RedirectToAction("ServiceCreate");
                 }
@@ -159,96 +171,109 @@ namespace AdminPanel.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ServiceEdit(int ServiceId)
+        public async Task<IActionResult> ServiceEdit(int id)
         {
-            //var service = await _context.Customers.FindAsync(ServiceId);
-
-            //return View(service);
-            //ServiceEntity'den ilgili kaydı bul
-            //var service = await _context.Services.FindAsync(ServiceId);
-
-            //if (service == null)
-            //{
-            //    //Eğer kayıt bulunamazsa, hata mesajı ekleyip geri döner
-            //    ModelState.AddModelError(string.Empty, "Servis bulunamadı.");
-            //    return RedirectToAction("ServicePage"); // Örneğin listeleme sayfasına geri dönebilirsiniz.
-            //}
-
-            ////DropDown listeleri doldur
-            //ViewBag.CustomerList = new SelectList(_context.Customers, "CustomerId", "CustomerName");
-            //ViewBag.ProductList = new SelectList(_context.Products, "ProductId", "ProductName");
-            //ViewBag.EmployeeList = new SelectList(_context.Employees, "EmployeeId", "EmployeeName");
-
-            ////Bulunan servisi view'a gönder
-            //return View(service);
-            // ServiceEntity'den ilgili kaydı bul
-            var service = await _context.Services.FindAsync(ServiceId);
+            var service = _context.Services.Include(s => s.Customer)
+                                       .Include(s => s.Product)
+                                       .Include(s => s.Employee)
+                                       .FirstOrDefault(s => s.ServiceId == id);
 
             if (service == null)
             {
-                // Eğer kayıt bulunamazsa, hata mesajı ekleyip geri döner
-                ModelState.AddModelError(string.Empty, "Servis bulunamadı.");
-                return RedirectToAction("ServicePage"); // Listeleme sayfasına geri dönebilirsiniz.
+                return NotFound();
             }
 
-            // DropDown listeleri doldur
-            ViewBag.CustomerList = new SelectList(_context.Customers, "CustomerId", "CustomerName");
-            ViewBag.ProductList = new SelectList(_context.Products, "ProductId", "ProductName");
-            ViewBag.EmployeeList = new SelectList(_context.Employees, "EmployeeId", "EmployeeName");
+            ViewBag.CustomerList = new SelectList(_context.Customers, "CustomerId", "CustomerName", service.CustomerId);
+            ViewBag.ProductList = new SelectList(_context.Products, "ProductId", "ProductName", service.ProductId);
+            ViewBag.EmployeeList = new SelectList(_context.Employees, "EmployeeId", "EmpName", service.EmployeeId);
 
-            // Bulunan servisi view'a gönder
             return View(service);
+
         }
 
 
 
         [HttpPost]
         public async Task<IActionResult> ServiceEdit(ServiceEntity viewModel)
-        {
-            if (!ModelState.IsValid)
+        { 
+            if (ModelState.IsValid)
             {
-                return View(viewModel);
+                var service = await _context.Services.FindAsync(viewModel.ServiceId); 
+                if (service == null)
+                {
+                    return NotFound();
+                }
+
+                
+                service.CustomerId = viewModel.CustomerId;
+                service.ProductId = viewModel.ProductId;
+                service.EmployeeId = viewModel.EmployeeId;
+                service.Model = viewModel.Model;
+                service.SeriNo = viewModel.SeriNo;
+                service.Warranty = viewModel.Warranty;
+                service.Complaint = viewModel.Complaint;
+                service.PerformedActions = viewModel.PerformedActions;
+                service.PartsCost = viewModel.PartsCost;
+                service.ServiceCost = viewModel.ServiceCost;
+                service.TotalCost = viewModel.TotalCost;
+                service.Description = viewModel.Description;
+                service.PaymentStatus = viewModel.PaymentStatus;
+                service.DeliveryDate = viewModel.DeliveryDate;
+                try
+                {
+                    await _context.SaveChangesAsync();
+
+
+                    TempData["SuccessMessage"] = "İçerik başarıyla güncellendi.";
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError(string.Empty, $"Güncelleme işlemi başarısız oldu: {ex.Message}");
+                }
+                //await _context.SaveChangesAsync(); // Asenkron kaydetme
+
+                return RedirectToAction("ServiceEdit", new { id = service.ServiceId }); 
             }
 
-            // Mevcut servis kaydını bul
-            var service = await _context.Services.FindAsync(viewModel.ServiceId);
+            ViewBag.CustomerList = new SelectList(_context.Customers, "CustomerId", "CustomerName", viewModel.CustomerId);
+            ViewBag.ProductList = new SelectList(_context.Products, "ProductId", "ProductName", viewModel.ProductId);
+            ViewBag.EmployeeList = new SelectList(_context.Employees, "EmployeeId", "EmpName", viewModel.EmployeeId);
+
+            return View(viewModel);
+        }
+
+        public async Task<IActionResult> ServiceDetails(int serviceId)
+        {
+            var service = _context.Services
+                .Include(s => s.Customer)  // Müşteri adını almak için
+                .Include(s => s.Product)   // Ürün adını almak için
+                .FirstOrDefault(s => s.ServiceId == serviceId);
 
             if (service == null)
             {
-                ModelState.AddModelError(string.Empty, "Servis bulunamadı.");
-                return View(viewModel);
+                return NotFound();
             }
 
-            // Mevcut müşteri bilgilerini güncelle
-            service.CustomerId = viewModel.CustomerId;
-            service.ProductId = viewModel.ProductId;
-            service.Model = viewModel.Model;
-            service.EmployeeId = viewModel.EmployeeId;
-            service.SeriNo = viewModel.SeriNo;
-            service.Warranty = viewModel.Warranty;
-            service.Complaint = viewModel.Complaint;
-            service.PerformedActions = viewModel.PerformedActions;
-            service.PartsCost = viewModel.PartsCost;
-            service.ServiceCost = viewModel.ServiceCost;
-            service.TotalCost = viewModel.TotalCost;
-            service.Description = viewModel.Description;
-            service.PaymentStatus = viewModel.PaymentStatus;
-            service.DeliveryDate = viewModel.DeliveryDate;
-
-            try
+            var serviceDetails = new
             {
-                // Veritabanında değişiklikleri kaydet
-                await _context.SaveChangesAsync();
+                service.ServiceId,
+                CustomerName = service.Customer.CustomerName,
+                ProductName = service.Product.ProductName,
+                service.Model,
+                service.SeriNo,
+                service.Complaint,
+                service.PerformedActions,
+                service.PartsCost,
+                service.ServiceCost,
+                service.TotalCost,
+                service.Description,
+                service.Warranty,
+                service.PaymentStatus,
+                service.DeliveryStatus,
+                DeliveryDate = service.DeliveryDate?.ToString("dd/MM/yyyy")
+            };
 
-                TempData["SuccessMessage"] = "Servis başarıyla güncellendi.";
-                return RedirectToAction("ServiceEdit", new { Id = viewModel.ServiceId });
-            }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError(string.Empty, $"Güncelleme işlemi başarısız oldu: {ex.Message}");
-
-            }
-            return View(viewModel);
+            return PartialView("ServiceDetails");
 
 
         }

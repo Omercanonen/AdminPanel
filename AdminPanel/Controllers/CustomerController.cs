@@ -18,7 +18,7 @@ namespace AdminPanel.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> CustomerPage(string sortOrder)
+        public async Task<IActionResult> CustomerPage(string sortOrder, string customerSearchString)
         { 
             ViewData["CustomerIdSortParam"] = string.IsNullOrEmpty(sortOrder) ? "CustomerId_desc" : "";
             ViewData["CustomerNameSortParam"] = sortOrder == "CustomerName" ? "CustomerName_desc" : "CustomerName";
@@ -28,6 +28,11 @@ namespace AdminPanel.Controllers
 
             // Sadece aktif müşterileri alıyoruz
             var customers = _context.Customers.Where(c => c.IsActive);
+
+            if(!String.IsNullOrEmpty(customerSearchString))
+            {
+                customers = customers.Where(c => c.CustomerName.Contains(customerSearchString) || c.CustomerSurname.Contains(customerSearchString));
+            }
 
             // Sıralama işlemi
             switch (sortOrder)

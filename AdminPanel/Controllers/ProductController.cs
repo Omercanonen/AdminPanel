@@ -18,12 +18,18 @@ namespace AdminPanel.Controllers
             _context = context;
         }
         [Authorize]
-        public async Task<IActionResult> ProductPage(string sortOrder)
+        public async Task<IActionResult> ProductPage(string sortOrder,string productSearchString)
         {
             ViewData["ProductIdSortParam"] = string.IsNullOrEmpty(sortOrder) ? "ProductId_desc" : "";
             ViewData["ProductNameSortParam"] = sortOrder == "ProductName" ?  "ProductName_desc" : "EmpName";
 
             var products = _context.Products.Where(p => p.IsActive);
+
+            if (!String.IsNullOrEmpty(productSearchString))
+            {
+                products = products.Where(c => c.ProductName.Contains(productSearchString));
+            }
+
 
             switch (sortOrder)
             {

@@ -1,0 +1,41 @@
+﻿@{
+    ViewData["Title"] = "ServiceDetails Page";
+}
+
+@model AdminPanel.Models.Service.ServiceEntity
+
+<div class="modal fade" id="ServiceDetails">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="ServiceDetailsLabel">Servis Detayı</h4>
+                <button type="button" class="close" data-dismiss="modal"
+            </div>
+
+            <div class="modal-body">
+                <p><strong>Servis ID:</strong> <span id="serviceId"></span></p>
+                <p><strong>Müşteri Adı:</strong> <span id="customerName"></span></p>
+                <p><strong>Ürün Adı:</strong> <span id="productName"></span></p>
+                <p><strong>Model:</strong> <span id="model"></span></p>
+                <p><strong>Seri No:</strong> <span id="seriNo"></span></p>
+                <p><strong>Şikayet:</strong> <span id="complaint"></span></p>
+                <p><strong>Yapılan İşlemler:</strong> <span id="performedActions"></span></p>
+                <p><strong>Parça Maliyeti:</strong> <span id="partsCost"></span></p>
+                <p><strong>Servis Maliyeti:</strong> <span id="serviceCost"></span></p>
+                <p><strong>Toplam Maliyet:</strong> <span id="totalCost"></span></p>
+                <p><strong>Açıklama:</strong> <span id="description"></span></p>
+                <p><strong>Garanti Durumu:</strong> <span id="warranty"></span></p>
+                <p><strong>Ödeme Durumu:</strong> <span id="paymentStatus"></span></p>
+                <p><strong>Teslim Durumu:</strong> <span id="deliveryStatus"></span></p>
+                <p><strong>Teslim Tarihi:</strong> <span id="deliveryDate"></span></p>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Kapat</button>
+            </div>
+        </div>
+
+
+    </div>
+
+</div>

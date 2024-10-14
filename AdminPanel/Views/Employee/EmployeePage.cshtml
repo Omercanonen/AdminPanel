@@ -29,12 +29,14 @@
     <div class="ibox-content">
         <div class="row">
             <div class="col-sm-9 m-b-xs">
-                <div class="input-group mb-3">
-                    <input type="text" class="form-control form-control-sm" placeholder="Search">
-                    <div class="input-group-append">
-                        <button class="btn btn-sm btn-primary" type="button">Go!</button>
+                <form asp-action="EmployeePage" method="get">
+                    <div class="input-group mb-3">
+                        <input type="text" name="employeeSearchString" class="form-control form-control-sm" placeholder="Çalışan Ara">
+                        <div class="input-group-append">
+                            <button class="btn btn-sm btn-primary" type="submit">Ara</button>
+                        </div>
                     </div>
-                </div>
+                </form>
 
             </div>
             <div class="col-sm-3">

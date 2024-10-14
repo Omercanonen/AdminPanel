@@ -2,6 +2,7 @@
 using AdminPanel.Models.Employees;
 using AdminPanel.Models.Products;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 
 namespace AdminPanel.Models.Service
@@ -26,10 +27,12 @@ namespace AdminPanel.Models.Service
         public bool DeliveryStatus { get; set; }
         public DateTime? DeliveryDate { get; set; }
         public bool IsActive { get; set; } = true;
-
+        
         public CustomerEntity? Customer { get; set; }
+        
         public Product? Product { get; set; }
         //public ProductModel? ProductModel { get; set; }
+        
         public Employee? Employee { get; set; }
     }
 }

@@ -18,7 +18,7 @@ namespace AdminPanel.Controllers
             this._context = context;
         }
         [Authorize]
-        public async Task<IActionResult> EmployeePage(string sortOrder)
+        public async Task<IActionResult> EmployeePage(string sortOrder, string employeeSearchString)
         {
 
             ViewData["EmployeeIdSortParam"] = string.IsNullOrEmpty(sortOrder) ? "EmployeeId_desc" : "";
@@ -29,6 +29,13 @@ namespace AdminPanel.Controllers
 
 
             var employees = _context.Employees.Where(e => e.IsActive);
+
+            if(!String.IsNullOrEmpty(employeeSearchString))
+            {
+                employees = employees.Where(e => e.EmpName.Contains(employeeSearchString) || e.EmpSurname.Contains(employeeSearchString));
+            }
+
+
 
             switch (sortOrder)
             {

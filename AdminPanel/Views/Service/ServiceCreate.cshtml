@@ -127,7 +127,24 @@
                             <label asp-for="DeliveryDate" class="control-label">Teslim Tarihi</label>
                             <input asp-for="DeliveryDate" type="datetime-local" class="form-control" id="exampleInputDescription" />
                         </div>
-
+                        <div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="successModalLabel">Başarılı</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        Kayıt Başarıla Oluşturuldu
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-primary" data-dismiss="modal">Tamam</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <!-- /.card-body -->
                         <div class="card-footer">
                             <button type="submit" class="btn btn-primary">Kaydet</button>
@@ -140,5 +157,16 @@
 
     <script src="~/inspinia-gh-pages/js/jquery-3.1.1.min.js"></script>
     <script src="~/inspinia-gh-pages/js/bootstrap.bundle.min.js"></script>
+
+    @section Scripts {
+        <script>
+            $(document).ready(function () {
+                var successMessage = '@TempData["SuccessMessage"]';
+                if (successMessage) {
+                    $('#successModal').modal('show');
+                }
+            });
+        </script>
+    }
 </body>
 

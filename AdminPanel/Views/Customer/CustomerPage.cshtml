@@ -30,12 +30,15 @@
     <div class="ibox-content">
         <div class="row">
             <div class="col-sm-9 m-b-xs">
-                <div class="input-group mb-3">
-                    <input type="text" class="form-control form-control-sm" placeholder="Search">
-                    <div class="input-group-append">
-                        <button class="btn btn-sm btn-primary" type="button">Go!</button>
+               
+                <form asp-action="CustomerPage" method="get">
+                    <div class="input-group mb-3">
+                        <input type="text" name="customerSearchString" class="form-control form-control-sm" placeholder="Müşteri Ara">
+                        <div class="input-group-append">
+                            <button class="btn btn-sm btn-primary" type="submit">Ara</button>
+                        </div>
                     </div>
-                </div>
+                </form>
 
             </div>
             <div class="col-sm-3">
@@ -138,5 +141,26 @@
 
     <!-- ChartJS-->
     <script src="js/plugins/chartJs/Chart.min.js"></script>
+    <script>
+        function performSearch() {
+            var query = document.getElementById("searchInput").value;
+            if (query) {
+                $.ajax({
+                    url: '@Url.Action("Search", "Customer")', // Controller'ın Search aksiyonunu çağırır
+                    type: "GET",
+                    data: { query: query },
+                    success: function (data) {
+                        $('#customerTableBody').html(data); // Arama sonuçlarını tabloya yazar
+                    }
+                });
+            }
+        }
+    </script>
+    <script>
+        function performSearch() {
+            var searchString = document.getElementById("searchString").value;
+            window.location.href = '/Customer/CustomerPage?searchString=' + encodeURIComponent(searchString);
+        }
+    </script>
 </body>
 

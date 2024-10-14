@@ -29,12 +29,14 @@
     <div class="ibox-content">
         <div class="row">
             <div class="col-sm-9 m-b-xs">
-                <div class="input-group mb-3">
-                    <input type="text" class="form-control form-control-sm" placeholder="Search">
-                    <div class="input-group-append">
-                        <button class="btn btn-sm btn-primary" type="button">Ara</button>
+                <form asp-action="ServicePage" method="get">
+                    <div class="input-group mb-3">
+                        <input type="text" name="serviceSearchString" class="form-control form-control-sm" placeholder="Servis Kaydı Ara">
+                        <div class="input-group-append">
+                            <button class="btn btn-sm btn-primary" type="submit">Ara</button>
+                        </div>
                     </div>
-                </div>
+                </form>
 
             </div>
             <div class="col-sm-3">
@@ -46,66 +48,7 @@
             </div>
         </div>
         <div class="table-responsive">    
-       @*  @if (Model != null && Model.Any())
-        {
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th scope="col">
-                            <a asp-action="ServicePage" asp-route-sortOrder="@ViewData["ServiceIdSortParam"]" class="sortable-column">Servis Id</a>
-                        </th>
-                        <th scope="col">
-                            <a asp-action="ServicePage" asp-route-sortOrder="@ViewData["CustomerIdSortParam"]" class="sortable-column">Müşteri</a>
-                        </th>
-                        <th scope="col">
-                            <a asp-action="ServicePage" asp-route-sortOrder="@ViewData["EmployeeIdSortParam"]" class="sortable-column">Çalışan</a>
-                        </th>
-                        <th scope="col">
-                            <a asp-action="ServicePage" asp-route-sortOrder="@ViewData["ProductIdSortParam"]" class="sortable-column">Ürün Markası</a>
-                        </th>
-                        <th scope="col">
-                            <a asp-action="ServicePage" asp-route-sortOrder="@ViewData["ModelSortParam"]" class="sortable-column">Ürün Modeli</a>
-                        </th>
-                        <th scope="col">Garanti Durumu</th>
-                        <th scope="col">Ödeme Durumu</th>
-                        <th scope="col">Teslimat Durumu</th>
-                        <th scope="col">Teslimat Tarihi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var service in Model)
-                    {
-                        <tr>
-                            <td>@service.ServiceId</td>
-                            <td>@service.CustomerId</td>
-                            <td>@service.EmployeeId</td>
-                            <td>@service.ProductId</td>
-                            <td>@service.Model</td>
-                            <td>
-                                <span class="badge @(service.Warranty ? "badge-success" : "badge-danger")">
-                                    @(service.Warranty ? "Aktif" : "Pasif")
-                                </span>
-                            </td>
-                            <td>
-                                <span class="badge @(service.PaymentStatus ? "badge-success" : "badge-danger")">
-                                    @(service.PaymentStatus ? "Ödendi" : "Ödenmedi")
-                                </span>
-                            </td>
-                            <td>
-                                <span class="badge @(service.DeliveryStatus ? "badge-success" : "badge-warning")">
-                                    @(service.DeliveryStatus ? "Teslim Edildi" : "Serviste")
-                                </span>
-                            </td>
-                            <td>@service.DeliveryDate</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        }
-        else
-        {
-            <p>Kullanıcı Bulunamadı</p>
-        } *@
+       
         @if (Model != null && Model.Any())
         {
             <table class="table table-striped">
@@ -159,6 +102,7 @@
                             <td>@service.DeliveryDate?.ToString("dd/MM/yyyy")</td>
                             <td><a class="btn btn-danger" asp-action="ServiceDelete" asp-route-id="@service.ServiceId">Sil</a></td>
                             <td><a class="btn btn-secondary" asp-action="ServiceEdit" asp-route-id="@service.ServiceId">Güncelle</a></td>
+                            <td><a class="btn btn-secondary" data-toggle="ajax-modal" data-target="#ServiceDetail"  asp-action="ServiceDetails" asp-route-id="@service.ServiceId">Detay</a></td>
                         </tr>
                         
                     }
@@ -172,6 +116,9 @@
         </div>
 
     </div>
+
+   
+
     <script src="js/jquery-3.1.1.min.js"></script>
     <script src="js/popper.min.js"></script>
     <script src="js/bootstrap.js"></script>
@@ -210,6 +157,47 @@
 
     <!-- ChartJS-->
     <script src="js/plugins/chartJs/Chart.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Detay butonuna tıklandığında bu fonksiyon çalışacak
+            $(".details-button").on("click", function () {
+                var serviceId = $(this).data("service-id");
+
+                // AJAX ile servisin detaylarını al
+                $.ajax({
+                    url: '@Url.Action("ServiceDetails", "Service")', // Dinamik URL oluştur
+                    type: 'GET',
+                    data: { serviceId: serviceId },
+                    success: function (data) {
+                        // Gelen veriyi modal içinde göster
+                        $('#serviceId').text(data.serviceId);
+                        $('#customerName').text(data.customerName);
+                        $('#productName').text(data.productName);
+                        $('#model').text(data.model);
+                        $('#seriNo').text(data.seriNo);
+                        $('#complaint').text(data.complaint);
+                        $('#performedActions').text(data.performedActions);
+                        $('#partsCost').text(data.partsCost);
+                        $('#serviceCost').text(data.serviceCost);
+                        $('#totalCost').text(data.totalCost);
+                        $('#description').text(data.description);
+                        $('#warranty').text(data.warranty ? "Var" : "Yok");
+                        $('#paymentStatus').text(data.paymentStatus);
+                        $('#deliveryStatus').text(data.deliveryStatus);
+                        $('#deliveryDate').text(data.deliveryDate);
+
+                        // Modal'ı aç
+                        $('#ServiceDetails').modal('show');
+                    },
+                    error: function () {
+                        alert('Detaylar yüklenemedi.');
+                    }
+                });
+            });
+        });
+    </script>
+
+    
 
 </body>
 
