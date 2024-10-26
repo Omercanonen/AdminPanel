@@ -242,12 +242,13 @@ namespace AdminPanel.Controllers
             return View(viewModel);
         }
 
+        [HttpGet]
         public async Task<IActionResult> ServiceDetails(int serviceId)
         {
-            var service = _context.Services
-                .Include(s => s.Customer)  // Müşteri adını almak için
-                .Include(s => s.Product)   // Ürün adını almak için
-                .FirstOrDefault(s => s.ServiceId == serviceId);
+            var service = await _context.Services
+                .Include(s => s.Customer)
+                .Include(s => s.Product)
+                .FirstOrDefaultAsync(s => s.ServiceId == serviceId);
 
             if (service == null)
             {
@@ -273,7 +274,7 @@ namespace AdminPanel.Controllers
                 DeliveryDate = service.DeliveryDate?.ToString("dd/MM/yyyy")
             };
 
-            return PartialView("ServiceDetails");
+            return PartialView("ServiceDetails", serviceDetails);
 
 
         }

@@ -1,4 +1,4 @@
-﻿@{
+﻿ @{
     ViewData["Title"] = "ServiceDetails Page";
 }
 
@@ -38,4 +38,21 @@
 
     </div>
 
-</div>
+</div> 
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    $(document).on('click', '[data-toggle="ajax-modal"]', function (e) {
+        e.preventDefault();
+
+        var url = $(this).data('url');
+
+        // AJAX ile veriyi yükleyin
+        $('#ServiceDetails .modal-content').load(url, function () {
+            $('#ServiceDetails').modal('show');
+        }).fail(function () {
+            alert("Hata: Servis detayları yüklenemedi.");
+        });
+    });
+</script>

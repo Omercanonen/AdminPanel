@@ -102,7 +102,14 @@
                             <td>@service.DeliveryDate?.ToString("dd/MM/yyyy")</td>
                             <td><a class="btn btn-danger" asp-action="ServiceDelete" asp-route-id="@service.ServiceId">Sil</a></td>
                             <td><a class="btn btn-secondary" asp-action="ServiceEdit" asp-route-id="@service.ServiceId">Güncelle</a></td>
-                            <td><a class="btn btn-secondary" data-toggle="ajax-modal" data-target="#ServiceDetail"  asp-action="ServiceDetails" asp-route-id="@service.ServiceId">Detay</a></td>
+                           @*  <td><a class="btn btn-secondary" data-toggle="ajax-modal" data-target="#ServiceDetail" data-url="@Url.Action("ServiceDetails", "Service") asp-action="ServiceDetails" asp-route-id="@service.ServiceId">Detay</a></td> *@
+                            <td>
+                                <a class="btn btn-secondary" data-toggle="ajax-modal" data-target="#ServiceDetails"
+                                   data-url="@Url.Action("ServiceDetails", "Service", new { serviceId = service.ServiceId })" asp-action="ServiceDetails" asp-route-id="@service.ServiceId">
+                                    Detay
+                                </a>
+                            </td>
+                            
                         </tr>
                         
                     }
@@ -116,6 +123,8 @@
         </div>
 
     </div>
+
+
 
    
 
@@ -196,6 +205,17 @@
             });
         });
     </script>
+    @* <script>
+        $(document).on('click', '[data-toggle="ajax-modal"]', function (e) {
+            e.preventDefault();
+
+            var url = $(this).data('url');
+            $.get(url, function (data) {
+                $('#ServiceDetails .modal-body').html(data);
+                $('#ServiceDetails').modal('show');
+            });
+        });
+    </script> *@
 
     
 
